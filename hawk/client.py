@@ -285,7 +285,7 @@ def get_bewit(uri, options=None):
         'ext': options['ext']
         }
 
-    return hcrypto.calculate_bewit(creds, artifacts, exp)
+    return hcrypto.calculate_bewit(creds, artifacts, exp).decode()
 
 
 def valid_bewit_args(uri, options):

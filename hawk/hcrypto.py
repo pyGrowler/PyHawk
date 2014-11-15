@@ -30,14 +30,15 @@ class InvalidBewit(HawkException):
 
 def calculate_mac(mac_type, credentials, options, url_encode=False):
     """Calculates a message authentication code (MAC)."""
-    normalized = normalize_string(mac_type, options)
+    normalized = normalize_string(mac_type, options).encode()
     digestmod = module_for_algorithm(credentials['algorithm'])
-    result = hmac.new(credentials['key'], normalized, digestmod)
+    key = credentials['key'].encode()
+    result = hmac.new(key, normalized, digestmod)
     if url_encode:
         mac = urlsafe_b64encode(result.digest())
     else:
         mac = b64encode(result.digest())
-    return mac
+    return mac.decode()
 
 
 def module_for_algorithm(algorithm):
@@ -84,14 +85,14 @@ def normalize_string(mac_type, options):
 def calculate_payload_hash(payload, algorithm, content_type):
     """Calculates a hash for a given payload."""
     p_hash = hashlib.new(algorithm)
-    p_hash.update('hawk.' + str(HAWK_VER) + '.payload\n')
-    p_hash.update(parse_content_type(content_type) + '\n')
+    p_hash.update(b'.'.join([b'hawk', str(HAWK_VER).encode(), b'payload\n']))
+    p_hash.update(parse_content_type(content_type).encode() + b'\n')
     if payload:
-        p_hash.update(payload)
+        p_hash.update(payload.encode())
     else:
-        p_hash.update('')
-    p_hash.update('\n')
-    return b64encode(p_hash.digest())
+        p_hash.update(b'')
+    p_hash.update(b'\n')
+    return b64encode(p_hash.digest()).decode()
 
 
 def parse_content_type(content_type):
@@ -106,7 +107,7 @@ def calculate_ts_mac(ts, credentials):
     """Calculates a timestamp message authentication code for HAWK."""
     data = 'hawk.' + str(HAWK_VER) + '.ts\n' + ts + '\n'
     digestmod = module_for_algorithm(credentials['algorithm'])
-    result = hmac.new(credentials['key'], data, digestmod)
+    result = hmac.new(credentials['key'].encode(), data.encode(), digestmod)
     return b64encode(result.digest())
 
 
@@ -124,7 +125,7 @@ def calculate_bewit(credentials, artifacts, exp):
     # Construct bewit: id\exp\mac\ext
     bewit = '\\'.join([credentials['id'],
                        str(int(exp)), mac, artifacts['ext']])
-    return urlsafe_b64encode(bewit)
+    return urlsafe_b64encode(bewit.encode())
 
 
 def explode_bewit(bewit):
@@ -132,7 +133,7 @@ def explode_bewit(bewit):
     keys include: id, exp - expiration timestamp as integer, mac, ext
     """
 
-    clear_b = urlsafe_b64decode(bewit)
+    clear_b = urlsafe_b64decode(bewit).decode()
     parts = clear_b.split('\\')
     if 4 != len(parts):
         log.info("Wrong number of bewit parts")

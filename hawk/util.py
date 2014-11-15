@@ -95,6 +95,7 @@ def parse_authorization_header(auth_header, allowable_keys=None):
 
 def compare(a, b):
     """ Constant time string comparision, mitigates side channel attacks. """
+#    a = a.decode()
     if len(a) != len(b):
       return False
     result = 0
