@@ -293,7 +293,7 @@ def valid_bewit_args(uri, options):
     if uri is None or options is None:
         raise BadRequest
 
-    if not isinstance(uri, basestring) or not isinstance(options, dict):
+    if not isinstance(uri, str) or not isinstance(options, dict):
         return False
 
     if not 'ttl_sec' in options:

@@ -4,7 +4,7 @@
 Various low level helper functions for HAWK authentication.
 """
 import logging
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 log = logging.getLogger(__name__)
 

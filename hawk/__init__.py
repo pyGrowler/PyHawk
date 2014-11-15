@@ -17,7 +17,7 @@ __build__ = 0x010200
 __copyright__ = 'Copyright 2013 Mozilla'
 
 
-import client
+import hawk.client
 from .server import Server  # NOQA
 from .hcrypto import InvalidBewit  # NOQA
 from .util import HawkException  # NOQA

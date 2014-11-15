@@ -14,7 +14,7 @@ import logging
 import math
 import pprint
 import time
-from urlparse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs
 
 import hawk.hcrypto as hcrypto
 import hawk.util as util
@@ -127,7 +127,7 @@ class Server(object):
         artifact_keys = ['ts', 'nonce', 'hash', 'ext',
                          'app', 'dlg', 'mac', 'id']
 
-        attrs = attributes.keys()
+        attrs = list(attributes.keys())
         for key in artifact_keys:
             if key in attrs:
                 artifacts[key] = attributes[key]
